@@ -97,3 +97,27 @@ CREATE TABLE IF NOT EXISTS partner_transactions (
                                                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                                     FOREIGN KEY (partner_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- 1. Live Traveler Operations & Trips Table
+CREATE TABLE IF NOT EXISTS active_trips (
+                                            trip_id INT AUTO_INCREMENT PRIMARY KEY,
+                                            user_id INT NOT NULL,
+                                            city_id INT NOT NULL,
+                                            current_status VARCHAR(50) DEFAULT 'EXPLORING', -- EXPLORING, IN_TRANSIT, COMPLETED
+                                            latitude DECIMAL(10, 8),
+                                            longitude DECIMAL(11, 8),
+                                            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- 2. Omnichannel Support Tickets Table
+CREATE TABLE IF NOT EXISTS support_tickets (
+                                               ticket_id INT AUTO_INCREMENT PRIMARY KEY,
+                                               user_id INT NOT NULL,
+                                               subject VARCHAR(255) NOT NULL,
+                                               channel ENUM('LIVE_CHAT', 'EMAIL') DEFAULT 'LIVE_CHAT',
+                                               status ENUM('OPEN', 'IN_PROGRESS', 'RESOLVED') DEFAULT 'OPEN',
+                                               priority ENUM('LOW', 'MEDIUM', 'HIGH', 'URGENT') DEFAULT 'MEDIUM',
+                                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                               FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
