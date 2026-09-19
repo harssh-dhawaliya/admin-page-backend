@@ -1,9 +1,10 @@
-package com.psc.adminbackend.security; // Ensure this matches your package name!
+package com.psc.adminbackend.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -15,17 +16,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Disable CSRF since REST APIs use tokens, not session cookies
-                .csrf(csrf -> csrf.disable())
-                // Allow anyone to access /api endpoints for now
+                .csrf(AbstractHttpConfigurer::disable) // Turns off the hidden POST block
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll() // Allows ALL requests without passwords
                 );
-
         return http.build();
     }
 
+    // Restored to prevent UserController from crashing
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
